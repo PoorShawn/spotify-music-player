@@ -119,7 +119,7 @@ async function checkCurrentPlayback() {
   try {
     const playbackState = await spotifyApi.player.getPlaybackState()
     if (playbackState && playbackState.item) {
-      isPlaying.value = !playbackState.paused
+      isPlaying.value = playbackState.is_playing
       currentPlayingTrackId.value = playbackState.item.id
     }
   } catch (error) {

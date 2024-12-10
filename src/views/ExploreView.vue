@@ -2,8 +2,6 @@
 import { onMounted, ref, computed } from 'vue'
 import { spotifyApi } from '@/config/spotifySDK'
 import type { Category } from '@spotify/web-api-ts-sdk'
-import SideNav from '@/components/SideNav.vue'
-import Player from '@/components/MusicPlayer.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -43,115 +41,102 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="app-layout">
-    <SideNav />
-    <div class="main-container">
-      <div class="content">
-        <header class="top-bar">
-          <div class="header-content">
-            <h1>探索音乐</h1>
-            <div class="search-bar">
-              <i class="fas fa-search search-icon"></i>
-              <input v-model="searchQuery" type="text" placeholder="搜索音乐分类..." />
+  <header class="top-bar">
+    <div class="header-content">
+      <h1>探索音乐</h1>
+      <div class="search-container">
+        <div class="search-bar">
+          <i class="fas fa-search search-icon"></i>
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="搜索音乐分类..."
+            class="search-input"
+          />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div v-if="isLoading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>正在加载分类...</p>
+    </div>
+
+    <div v-else>
+      <div class="categories-grid">
+        <div
+          v-for="category in filteredCategories"
+          :key="category.id"
+          class="category-card"
+          @click="navigateToCategory(category.id)"
+        >
+          <div class="category-content">
+            <div class="category-image">
+              <img :src="category.icons[0]?.url" :alt="category.name" loading="lazy" />
             </div>
-          </div>
-        </header>
-
-        <main class="main-content">
-          <div v-if="isLoading" class="loading-container">
-            <div class="loading-spinner"></div>
-            <p>正在加载分类...</p>
-          </div>
-
-          <div v-else>
-            <div class="categories-grid">
-              <div
-                v-for="category in filteredCategories"
-                :key="category.id"
-                class="category-card"
-                @click="navigateToCategory(category.id)"
-              >
-                <div class="category-content">
-                  <div class="category-image">
-                    <img :src="category.icons[0]?.url" :alt="category.name" />
-                  </div>
-                  <div class="category-info">
-                    <h3>{{ category.name }}</h3>
-                    <div class="category-overlay">
-                      <button class="explore-btn">
-                        <i class="fas fa-compass"></i>
-                        探索
-                      </button>
-                    </div>
-                  </div>
-                </div>
+            <div class="category-info">
+              <h3>{{ category.name }}</h3>
+              <div class="category-overlay">
+                <button class="explore-btn">
+                  <i class="fas fa-compass"></i>
+                  探索
+                </button>
               </div>
             </div>
-
-            <div v-if="filteredCategories.length === 0" class="no-results">
-              <i class="fas fa-search"></i>
-              <p>没有找到匹配的分类</p>
-            </div>
           </div>
-        </main>
+        </div>
       </div>
-      <Player />
+
+      <div v-if="filteredCategories.length === 0" class="no-results">
+        <i class="fas fa-search"></i>
+        <p>没有找到匹配的分类</p>
+      </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <style scoped>
-.app-layout {
-  display: flex;
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #1a1a1a, #121212);
-  color: white;
-}
-
-.main-container {
-  flex: 1;
-  margin-left: 280px;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  position: relative;
-}
-
-.content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0 20px 100px 20px;
-}
-
 .top-bar {
   position: sticky;
   top: 0;
   z-index: 100;
   backdrop-filter: blur(20px);
-  background: linear-gradient(to bottom, rgba(26, 26, 26, 0.8), rgba(18, 18, 18, 0.8));
-  padding: 24px 0;
+  background: linear-gradient(to bottom, rgba(26, 26, 26, 0.9), rgba(18, 18, 18, 0.9));
+  padding: 20px 32px;
   margin-bottom: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .header-content {
+  max-width: 1400px;
+  margin: 0 auto;
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
 }
 
 .header-content h1 {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
   background: linear-gradient(to right, #fff, #b3b3b3);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   margin: 0;
+  white-space: nowrap;
+}
+
+.search-container {
+  flex: 1;
+  max-width: 500px;
 }
 
 .search-bar {
-  max-width: 400px;
   position: relative;
+  width: 100%;
 }
 
 .search-icon {
@@ -159,101 +144,64 @@ onMounted(() => {
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #909090;
-  font-size: 14px;
-}
-
-.search-bar input {
-  width: 100%;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: none;
-  padding: 14px 20px 14px 44px;
-  border-radius: 24px;
-  color: white;
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-
-.search-bar input:focus {
-  outline: none;
-  background-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.5);
-}
-
-.search-bar input::placeholder {
-  color: #909090;
-}
-
-.main-content {
-  padding: 20px 0;
-}
-
-.loading-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  gap: 16px;
   color: #b3b3b3;
 }
 
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  border-top-color: #1db954;
-  animation: spin 1s linear infinite;
+.search-input {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  border: none;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+.search-input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.search-input::placeholder {
+  color: #b3b3b3;
+}
+
+.main-content {
+  padding: 0 32px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .categories-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 24px;
-  animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  padding: 16px 0;
 }
 
 .category-card {
-  position: relative;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 12px;
   overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    background-color 0.3s ease;
   cursor: pointer;
-  transition: all 0.3s ease;
-  background: rgba(255, 255, 255, 0.05);
 }
 
 .category-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .category-content {
   position: relative;
-  aspect-ratio: 4/3;
 }
 
 .category-image {
-  position: absolute;
-  inset: 0;
+  aspect-ratio: 1;
   overflow: hidden;
 }
 
@@ -265,35 +213,33 @@ onMounted(() => {
 }
 
 .category-card:hover .category-image img {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .category-info {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+  padding: 16px;
+  position: relative;
 }
 
 .category-info h3 {
-  font-size: 1.5rem;
-  font-weight: 700;
   margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
 }
 
 .category-overlay {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
-  transition: all 0.3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .category-card:hover .category-overlay {
@@ -304,71 +250,75 @@ onMounted(() => {
   background: #1db954;
   color: white;
   border: none;
-  padding: 12px 24px;
-  border-radius: 24px;
-  font-size: 14px;
+  padding: 8px 24px;
+  border-radius: 20px;
   font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  transform: translateY(20px);
-  opacity: 0;
-}
-
-.category-card:hover .explore-btn {
-  transform: translateY(0);
-  opacity: 1;
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .explore-btn:hover {
   background: #1ed760;
-  transform: scale(1.05) !important;
+  transform: scale(1.05);
 }
 
-.no-results {
+.loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 300px;
+  min-height: 400px;
   gap: 16px;
-  color: #b3b3b3;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  border-top-color: #1db954;
+  animation: spin 1s linear infinite;
+}
+
+.no-results {
   text-align: center;
+  padding: 48px 0;
+  color: #b3b3b3;
 }
 
 .no-results i {
   font-size: 48px;
-  opacity: 0.5;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 768px) {
-  .main-container {
-    margin-left: 0;
-    padding-bottom: 136px;
-  }
-
-  .content {
-    padding: 0 16px 60px 16px;
+  .header-content {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .header-content h1 {
-    font-size: 2rem;
+    text-align: center;
+  }
+
+  .search-container {
+    max-width: 100%;
   }
 
   .categories-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 16px;
-  }
-
-  .category-info h3 {
-    font-size: 1.2rem;
-  }
-
-  .explore-btn {
-    padding: 10px 20px;
-    font-size: 13px;
   }
 }
 </style>

@@ -1,9 +1,23 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
+
+import BaseLayout from '@/components/layouts/BaseLayout.vue'
+
+const route = useRoute()
+const isAuthRoute = computed(() => {
+  return ['/login', '/auth/callback'].includes(route.path)
+})
 </script>
 
 <template>
-  <RouterView />
+  <template v-if="isAuthRoute">
+    <RouterView />
+  </template>
+
+  <BaseLayout v-else>
+    <RouterView />
+  </BaseLayout>
 </template>
 
 <style scoped></style>

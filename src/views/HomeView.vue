@@ -5,8 +5,6 @@ import { spotifyApi } from '@/config/spotifySDK'
 import type { UserProfile, PlayHistory, Track } from '@spotify/web-api-ts-sdk'
 import AlbumCard from '@/components/AlbumCard.vue'
 import ArtistCard from '@/components/ArtistCard.vue'
-import Player from '@/components/MusicPlayer.vue'
-import SideNav from '@/components/SideNav.vue'
 
 const router = useRouter()
 const userProfile = ref<UserProfile | null>(null)
@@ -84,132 +82,81 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="app-layout">
-    <SideNav />
-    <div class="main-container">
-      <div class="content">
-        <!-- 顶部搜索栏 -->
-        <header class="top-bar">
-          <div class="search-bar">
-            <input type="text" placeholder="What do you want to listen to?" />
-          </div>
-          <div class="user-profile" v-if="userProfile">
-            <img :src="userProfile.images[0]?.url" :alt="userProfile.display_name" />
-          </div>
-        </header>
-
-        <!-- 主要内容区域 -->
-        <main class="main-content">
-          <section>
-            <h2>Recently played</h2>
-            <div class="scroll-container">
-              <div class="card-row">
-                <AlbumCard
-                  v-for="item in recentlyPlayed"
-                  :key="item.track.id"
-                  :title="item.track.name"
-                  :description="item.track.artists[0].name"
-                  :imageUrl="item.track.album.images[0]?.url"
-                  :trackId="item.track.id"
-                />
-              </div>
-              <div class="scroll-indicator">
-                <i class="fas fa-chevron-right"></i>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h2>Recommended for you</h2>
-            <div class="scroll-container">
-              <div class="card-row">
-                <AlbumCard
-                  v-for="track in recommendedTracks"
-                  :key="track.id"
-                  :title="track.name"
-                  :description="track.artists[0].name"
-                  :imageUrl="track.album.images[0]?.url"
-                  :trackId="track.id"
-                />
-              </div>
-              <div class="scroll-indicator">
-                <i class="fas fa-chevron-right"></i>
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h2>Artist for you</h2>
-            <div class="scroll-container">
-              <div class="card-row">
-                <ArtistCard
-                  v-for="artist in recommendedArtists"
-                  :key="artist.id"
-                  :id="artist.id"
-                  :name="artist.name"
-                  :imageUrl="artist.imageUrl"
-                />
-              </div>
-              <div class="scroll-indicator">
-                <i class="fas fa-chevron-right"></i>
-              </div>
-            </div>
-          </section>
-        </main>
-      </div>
-      <Player />
+  <!-- 顶部搜索栏 -->
+  <header class="top-bar">
+    <div class="search-bar">
+      <input type="text" placeholder="What do you want to listen to?" />
     </div>
-  </div>
+    <div class="user-profile" v-if="userProfile">
+      <img :src="userProfile.images[0]?.url" :alt="userProfile.display_name" />
+    </div>
+  </header>
+
+  <!-- 主要内容区域 -->
+  <main class="main-content">
+    <section>
+      <h2>Recently played</h2>
+      <div class="scroll-container">
+        <div class="card-row">
+          <AlbumCard
+            v-for="item in recentlyPlayed"
+            :key="item.track.id"
+            :title="item.track.name"
+            :description="item.track.artists[0].name"
+            :imageUrl="item.track.album.images[0]?.url"
+            :trackId="item.track.id"
+          />
+        </div>
+        <div class="scroll-indicator">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Recommended for you</h2>
+      <div class="scroll-container">
+        <div class="card-row">
+          <AlbumCard
+            v-for="track in recommendedTracks"
+            :key="track.id"
+            :title="track.name"
+            :description="track.artists[0].name"
+            :imageUrl="track.album.images[0]?.url"
+            :trackId="track.id"
+          />
+        </div>
+        <div class="scroll-indicator">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Artist for you</h2>
+      <div class="scroll-container">
+        <div class="card-row">
+          <ArtistCard
+            v-for="artist in recommendedArtists"
+            :key="artist.id"
+            :id="artist.id"
+            :name="artist.name"
+            :imageUrl="artist.imageUrl"
+          />
+        </div>
+        <div class="scroll-indicator">
+          <i class="fas fa-chevron-right"></i>
+        </div>
+      </div>
+    </section>
+  </main>
 </template>
 
 <style scoped>
-.app-layout {
-  display: flex;
-  min-height: 100vh;
-  background: linear-gradient(to bottom, #1a1a1a, #121212);
-  color: white;
-}
-
-.main-container {
-  flex: 1;
-  margin-left: 280px;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  position: relative;
-}
-
-.content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0 20px 100px 20px;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
-}
-
-.content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.content::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.content::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-}
-
-.content:hover::-webkit-scrollbar-thumb {
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
 .top-bar {
   position: sticky;
   top: 0;
   z-index: 100;
-  /* background: linear-gradient(to bottom, rgba(26, 26, 26, 0.98), rgba(18, 18, 18, 0.95)); */
   backdrop-filter: blur(20px);
   padding: 16px 0;
   display: flex;
