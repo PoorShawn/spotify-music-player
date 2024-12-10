@@ -258,39 +258,39 @@ onUnmounted(() => {
   right: 0;
   background: linear-gradient(180deg, rgba(24, 24, 24, 0.98) 0%, rgba(18, 18, 18, 0.98) 100%);
   backdrop-filter: blur(30px);
-  padding: 20px 32px;
+  padding: 12px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
-  height: 100px;
+  height: 80px;
   z-index: 1000;
 }
 
 .track-info {
   display: flex;
   align-items: center;
-  gap: 20px;
-  min-width: 200px;
+  gap: 16px;
+  min-width: 180px;
   max-width: 30%;
 }
 
 .track-image {
-  width: 64px;
-  height: 64px;
+  width: 52px;
+  height: 52px;
   background-color: #282828;
   background-size: cover;
   background-position: center;
-  border-radius: 8px;
+  border-radius: 6px;
   flex-shrink: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .track-image:hover {
   transform: scale(1.05);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
 .track-details {
@@ -299,7 +299,7 @@ onUnmounted(() => {
 }
 
 .track-details h4 {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   margin: 0;
   color: #ffffff;
@@ -307,11 +307,11 @@ onUnmounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   letter-spacing: 0.3px;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .track-details p {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   margin: 0;
   color: #b3b3b3;
   white-space: nowrap;
@@ -322,18 +322,18 @@ onUnmounted(() => {
 
 .player-controls {
   flex: 1;
-  max-width: 800px;
+  max-width: 700px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  margin: 0 40px;
+  gap: 12px;
+  margin: 0 32px;
 }
 
 .controls {
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
 }
 
 .control-btn {
@@ -341,12 +341,12 @@ onUnmounted(() => {
   border: none;
   color: #b3b3b3;
   cursor: pointer;
-  padding: 8px;
-  font-size: 20px;
+  padding: 6px;
+  font-size: 16px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -360,13 +360,13 @@ onUnmounted(() => {
 
 .control-btn.play {
   background-color: #fff;
-  width: 48px;
-  height: 48px;
+  width: 38px;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #000;
-  font-size: 18px;
+  font-size: 16px;
   box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
 }
 
@@ -381,14 +381,14 @@ onUnmounted(() => {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 16px;
+  gap: 10px;
+  padding: 0 12px;
 }
 
 .time {
-  font-size: 13px;
+  font-size: 12px;
   color: #b3b3b3;
-  min-width: 45px;
+  min-width: 40px;
   text-align: center;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.5px;
@@ -397,7 +397,7 @@ onUnmounted(() => {
 
 .progress-bar {
   flex: 1;
-  height: 16px;
+  height: 12px;
   position: relative;
   cursor: pointer;
   display: flex;
@@ -406,28 +406,28 @@ onUnmounted(() => {
 
 .progress-bg {
   width: 100%;
-  height: 4px;
+  height: 3px;
   background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  border-radius: 3px;
   position: absolute;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .progress-current {
-  height: 4px;
+  height: 3px;
   background-color: #1db954;
-  border-radius: 4px;
+  border-radius: 3px;
   position: relative;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .progress-handle {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   background-color: #fff;
   border-radius: 50%;
   position: absolute;
-  right: -7px;
+  right: -6px;
   top: 50%;
   transform: translateY(-50%) scale(0);
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -435,11 +435,11 @@ onUnmounted(() => {
 }
 
 .progress-bar:hover .progress-bg {
-  height: 6px;
+  height: 4px;
 }
 
 .progress-bar:hover .progress-current {
-  height: 6px;
+  height: 4px;
   background-color: #1ed760;
 }
 
@@ -450,8 +450,8 @@ onUnmounted(() => {
 @media (max-width: 768px) {
   .music-player {
     left: 0;
-    padding: 16px 20px;
-    height: 90px;
+    padding: 12px 16px;
+    height: 70px;
   }
 
   .track-info {
@@ -459,32 +459,32 @@ onUnmounted(() => {
   }
 
   .track-image {
-    width: 56px;
-    height: 56px;
+    width: 46px;
+    height: 46px;
   }
 
   .controls {
-    gap: 24px;
+    gap: 20px;
   }
 
   .control-btn {
-    font-size: 18px;
-    width: 36px;
-    height: 36px;
+    font-size: 15px;
+    width: 28px;
+    height: 28px;
   }
 
   .control-btn.play {
-    width: 44px;
-    height: 44px;
+    width: 34px;
+    height: 34px;
   }
 }
 
 @media (max-width: 480px) {
   .music-player {
     height: auto;
-    padding: 16px;
+    padding: 12px;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
   }
 
   .track-info {
