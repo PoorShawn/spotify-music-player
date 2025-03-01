@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { spotifyApi } from '@/config/spotifySDK'
+import type { SimplifiedPlaylist } from '@spotify/web-api-ts-sdk'
 
 const route = useRoute()
+const router = useRouter()
 const isCollapsed = ref(false)
+const recentPlaylists = ref<SimplifiedPlaylist[]>([])
 
 const menuItems = [
   { name: 'Home', icon: 'fas fa-home', path: '/' },
@@ -12,16 +16,24 @@ const menuItems = [
   { name: 'Playlists', icon: 'fas fa-list', path: '/playlists' },
 ]
 
-const playlists = ref([
-  { name: 'Joy Of Memorizer', artist: 'Muhammad Al Muqit', type: 'Quran Nasheed' },
-  { name: 'Tasbih', artist: 'Halal Music', type: 'Halal Music' },
-  { name: 'Sallallahu', artist: 'Halal Music', type: 'Halal Music' },
-  { name: 'Amantu Billahi', artist: 'Halal Music', type: 'Halal Music' },
-  { name: 'Ramadan Nasheed', artist: 'Halal Music', type: 'Halal Music' },
-  { name: 'Eid Nasheed', artist: 'Halal Music', type: 'Halal Music' },
-  { name: 'Wedding Nasheed', artist: 'Halal Music', type: 'Halal Music' },
-  { name: 'Abna Kaweme', artist: 'Islamic Band', type: 'Islamic Band' },
-])
+// 获取用户最近的播放列表
+async function loadRecentPlaylists() {
+  try {
+    const response = await spotifyApi.currentUser.playlists.playlists(5) // 只获取最近的5个
+    recentPlaylists.value = response.items
+  } catch (error) {
+    console.error('Failed to load recent playlists:', error)
+  }
+}
+
+// 跳转到播放列表详情
+function navigateToPlaylist(playlistId: string) {
+  router.push(`/playlist/${playlistId}`)
+}
+
+onMounted(() => {
+  loadRecentPlaylists()
+})
 </script>
 
 <template>
@@ -43,14 +55,25 @@ const playlists = ref([
     </div>
 
     <div class="playlist-section" v-if="!isCollapsed">
-      <div class="playlist-item" v-for="(playlist, index) in playlists" :key="index">
+      <h3 class="section-title">最近播放列表</h3>
+      <div 
+        class="playlist-item" 
+        v-for="playlist in recentPlaylists" 
+        :key="playlist.id"
+        @click="navigateToPlaylist(playlist.id)"
+      >
         <div class="playlist-icon">
-          <i class="fas fa-music"></i>
+          <img 
+            v-if="playlist.images?.[0]?.url" 
+            :src="playlist.images[0].url" 
+            :alt="playlist.name"
+          />
+          <i v-else class="fas fa-music"></i>
         </div>
         <div class="playlist-info">
           <h4>{{ playlist.name }}</h4>
-          <p>{{ playlist.artist }}</p>
-          <span class="playlist-type">{{ playlist.type }}</span>
+          <p>{{ playlist.owner.display_name }}</p>
+          <!-- <span class="playlist-type">{{ playlist. }} 首歌曲</span> -->
         </div>
       </div>
     </div>
@@ -348,5 +371,21 @@ const playlists = ref([
   .collapse-btn {
     display: none;
   }
+}
+
+.section-title {
+  padding: 0 24px;
+  margin: 0 0 16px 0;
+  font-size: 0.875rem;
+  color: #909090;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.playlist-icon img {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
 }
 </style>
