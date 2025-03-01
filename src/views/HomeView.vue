@@ -30,6 +30,7 @@ async function loadRecommendedTracks() {
       const topTracksResults = await Promise.all(tracksPromises)
       const allTracks = topTracksResults.flatMap((result) => result.tracks.slice(0, 3))
       recommendedTracks.value = allTracks.slice(0, 10)
+      console.log('Recommended Tracks:', recommendedTracks.value)
     }
   } catch (error) {
     console.error('Failed to load recommended tracks:', error)
@@ -67,12 +68,23 @@ async function loadRecentlyPlayed() {
         name: artist.name,
         imageUrl: artist.images[0]?.url,
       }))
+      console.log('Recommended Artists:', recommendedArtists.value);
 
-      await loadRecommendedTracks()
+      await loadRecommendedTracks();
     }
   } catch (error) {
     console.error('Failed to load recently played tracks:', error)
   }
+}
+
+function loadPlaylists() {
+  try {
+    const response = spotifyApi.currentUser.playlists;
+    console.log('Playlists:', response)
+  } catch (error) {
+    console.error('Failed to load playlists:', error)
+  }
+
 }
 
 onMounted(() => {

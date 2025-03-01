@@ -1,18 +1,20 @@
 <script setup lang="ts">
 import { onMounted, ref, computed } from 'vue'
 import { spotifyApi } from '@/config/spotifySDK'
-import type { Category } from '@spotify/web-api-ts-sdk'
+import type { SimplifiedAlbum } from '@spotify/web-api-ts-sdk'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const categories = ref<Category[]>([])
+const newReleases = ref<SimplifiedAlbum[]>([])
 const searchQuery = ref('')
 const isLoading = ref(true)
 
-async function loadCategories() {
+async function loadNewReleases() {
   try {
-    const response = await spotifyApi.browse.getCategories('US', 'EN', 50, 0)
-    categories.value = response.categories.items
+    const response = await spotifyApi.browse.getCategories();
+    newReleases.value = response.albums.items
+    console.log(newReleases.value);
+    //categories.value = response.categories.items
   } catch (error) {
     console.error('Failed to load categories:', error)
   } finally {
@@ -28,15 +30,15 @@ function navigateToCategory(categoryId: string) {
   router.push(`/category/${categoryId}`)
 }
 
-const filteredCategories = computed(() => {
-  if (!searchQuery.value) return categories.value
-  return categories.value.filter((category) =>
-    category.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
-  )
-})
+// const filteredCategories = computed(() => {
+//   if (!searchQuery.value) return categories.value
+//   return categories.value.filter((category) =>
+//     category.name.toLowerCase().includes(searchQuery.value.toLowerCase()),
+//   )
+// })
 
 onMounted(() => {
-  loadCategories()
+  loadNewReleases()
 })
 </script>
 
@@ -50,7 +52,7 @@ onMounted(() => {
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="搜索音乐分类..."
+            placeholder="搜索音乐..."
             class="search-input"
           />
         </div>
@@ -67,17 +69,18 @@ onMounted(() => {
     <div v-else>
       <div class="categories-grid">
         <div
-          v-for="category in filteredCategories"
-          :key="category.id"
+          v-for="album in newReleases"
+          :key="album.id"
           class="category-card"
-          @click="navigateToCategory(category.id)"
         >
+          <!-- @click="navigateToCategory(category.id)" -->
+        
           <div class="category-content">
             <div class="category-image">
-              <img :src="category.icons[0]?.url" :alt="category.name" loading="lazy" />
+              <img :src="album.images[0]?.url" :alt="album.name" loading="lazy" />
             </div>
             <div class="category-info">
-              <h3>{{ category.name }}</h3>
+              <h3>{{ album.name }}</h3>
               <div class="category-overlay">
                 <button class="explore-btn">
                   <i class="fas fa-compass"></i>
@@ -89,10 +92,10 @@ onMounted(() => {
         </div>
       </div>
 
-      <div v-if="filteredCategories.length === 0" class="no-results">
+      <!-- <div v-if="filteredCategories.length === 0" class="no-results">
         <i class="fas fa-search"></i>
         <p>没有找到匹配的分类</p>
-      </div>
+      </div> -->
     </div>
   </main>
 </template>
