@@ -39,8 +39,8 @@ onMounted(() => {
 <template>
   <nav class="side-nav" :class="{ collapsed: isCollapsed }">
     <div class="logo">
-      <img src="/images/logo.svg" alt="Musify" />
-      <span v-if="!isCollapsed">Musify</span>
+      <!-- <img src="/images/logo.svg" alt="Musify" /> -->
+      <span v-if="!isCollapsed">A <strong>Music Player</strong> by <em>spotifyApi</em></span>
     </div>
 
     <div class="menu-section">
