@@ -1,45 +1,70 @@
-# spotify-music-player
+# Spotify Music Player
 
-This template should help get you started developing with Vue 3 in Vite.
+一个基于 Vue 3 开发的 Spotify 音乐播放器网页应用，提供流畅的音乐播放体验和个性化推荐功能。
 
-## Recommended IDE Setup
+## 功能特性
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- 🎵 Spotify 账号登录与授权
+- 🎼 音乐播放控制（播放、暂停、上一首、下一首）
+- 📑 最近播放记录展示
+- 👥 个性化艺人推荐
+- 🎯 基于用户喜好的音乐推荐
+- 🔍 音乐搜索功能
+- 📱 响应式设计，支持移动端访问
 
-## Type Support for `.vue` Imports in TS
+## 技术栈
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+- **前端框架**: Vue 3
+- **开发语言**: TypeScript
+- **构建工具**: Vite
+- **路由管理**: Vue Router
+- **状态管理**: Pinia
+- **API 集成**: Spotify Web API
+- **样式处理**: CSS with Scoped styling
+- **代码规范**: ESLint + Prettier
+- **测试工具**: Vitest
 
-## Customize configuration
+## 快速开始
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+### 前置要求
 
-## Project Setup
+- Node.js (推荐 v16 或更高版本)
+- Spotify 开发者账号（通过 Web Playback SDK 播放音乐需使用 Spotify Premium 账号）
+- Spotify API Client ID 和 Client Secret
 
-```sh
+### 安装步骤
+
+1. 克隆项目到本地：
+
+```bash
+git clone https://github.com/yourusername/spotify-music-player.git
+cd spotify-music-player
+```
+
+2. 安装依赖：
+
+```bash
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+3. 配置环境变量：
 
-```sh
+创建 .env 文件并添加以下配置：
+
+```
+VITE_SPOTIFY_CLIENT_ID=your_client_id
+VITE_SPOTIFY_REDIRECT_URI=http://localhost:5173/callback
+```
+
+4. 启动开发服务器：
+
+```bash
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Run Unit Tests with [Vitest](https://vitest.dev/)
-
-```sh
-npm run test:unit
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+## 致谢
+- [codewithsadee](https://www.youtube.com/watch?v=Ms5Uhj87XsE) - 感谢其制作的优秀的 Spotify Clone 教程，该教程详细展示了如何构建一个全栈音乐播放器应用。
+- [Muffon](https://github.com/staniel359/muffon) - 一个优秀的跨平台音乐流媒体客户端项目，为本项目提供了很多的激励和鼓舞。
+- [Spotify API](https://developer.spotify.com/)
+- [Vue.js](https://cn.vuejs.org/)
+- [Vite](https://vitejs.cn/vite3-cn/guide/)
