@@ -66,5 +66,4 @@ npm run dev
 - [codewithsadee](https://www.youtube.com/watch?v=Ms5Uhj87XsE) - 感谢其制作的优秀的 Spotify Clone 教程，该教程详细展示了如何构建一个全栈音乐播放器应用。
 - [Muffon](https://github.com/staniel359/muffon) - 一个优秀的跨平台音乐流媒体客户端项目，为本项目提供了很多的激励和鼓舞。
 - [Spotify API](https://developer.spotify.com/)
-- [Vue.js](https://cn.vuejs.org/)
-- [Vite](https://vitejs.cn/vite3-cn/guide/)
+- [Vue.js](https://cn.vuejs.org/), [TypeScript](https://www.tslang.cn/), [Vite](https://vitejs.cn/vite3-cn/guide/)
