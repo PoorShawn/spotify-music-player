@@ -1,16 +1,29 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { spotifyApi } from '@/config/spotifySDK'
-import type { UserProfile, PlayHistory, Track } from '@spotify/web-api-ts-sdk'
+import { type UserProfile, type PlayHistory, type Track, SpotifyApi } from '@spotify/web-api-ts-sdk'
 import AlbumCard from '@/components/AlbumCard.vue'
 import ArtistCard from '@/components/ArtistCard.vue'
 
 const router = useRouter()
 const userProfile = ref<UserProfile | null>(null)
+const userProfileRef = ref<HTMLElement | null>(null)
+const dropdownRef = ref<HTMLElement | null>(null)
+const isDropdownVisible = ref(false)
 const recentlyPlayed = ref<PlayHistory[]>([])
 const recommendedArtists = ref<Array<{ id: string; name: string; imageUrl?: string }>>([])
 const recommendedTracks = ref<Track[]>([])
+
+// 处理点击事件,进行用户头像的下拉菜单的显示和隐藏
+function handleGlobalClick(event: MouseEvent) {
+  if (!userProfileRef.value || !dropdownRef.value) return
+
+  const target = event.target as HTMLElement
+  if (!userProfileRef.value.contains(target) && !dropdownRef.value.contains(target)) {
+    isDropdownVisible.value = false
+  }
+}
 
 async function loadUserProfile() {
   try {
@@ -19,6 +32,20 @@ async function loadUserProfile() {
     console.error('Failed to load user profile:', error)
     router.push('/login')
   }
+}
+
+async function handleLogout() {
+  try {
+    localStorage.removeItem('device_id')
+    localStorage.removeItem('spotify-sdk:AuthorizationCodeWithPKCEStrategy:token')
+    router.push('/login')
+  } catch (error) {
+    console.error('Failed to logout:', error)
+  }
+}
+
+function toggleDropdown() {
+  isDropdownVisible.value = !isDropdownVisible.value
 }
 
 async function loadRecommendedTracks() {
@@ -77,19 +104,24 @@ async function loadRecentlyPlayed() {
   }
 }
 
-function loadPlaylists() {
-  try {
-    const response = spotifyApi.currentUser.playlists;
-    console.log('Playlists:', response)
-  } catch (error) {
-    console.error('Failed to load playlists:', error)
-  }
+// function loadPlaylists() {
+//   try {
+//     const response = spotifyApi.currentUser.playlists;
+//     console.log('Playlists:', response)
+//   } catch (error) {
+//     console.error('Failed to load playlists:', error)
+//   }
 
-}
+// }
 
 onMounted(() => {
   loadUserProfile()
   loadRecentlyPlayed()
+  window.addEventListener('click', handleGlobalClick)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('click', handleGlobalClick)
 })
 </script>
 
@@ -99,8 +131,32 @@ onMounted(() => {
     <div class="search-bar">
       <input type="text" placeholder="What do you want to listen to?" />
     </div>
-    <div class="user-profile" v-if="userProfile">
+    <div
+      ref="userProfileRef"
+      class="user-profile"
+      v-if="userProfile"
+      @click.stop="toggleDropdown"
+    >
       <img :src="userProfile.images[0]?.url" :alt="userProfile.display_name" />
+
+      <div
+        ref="dropdownRef"
+        class="user-dropdown"
+        v-show="isDropdownVisible"
+      >
+        <div class="dropdown-header">
+          <img :src="userProfile.images[0]?.url" :alt="userProfile.display_name" />
+          <div class="user-info">
+            <h4>{{ userProfile.display_name }}</h4>
+            <p>{{ userProfile.email }}</p>
+          </div>
+        </div>
+        <div class="dropdown-divider"></div>
+        <button class="dropdown-item" @click="handleLogout">
+          <i class="fas fa-sign-out-alt"></i>
+          登出
+        </button>
+      </div>
     </div>
   </header>
 
@@ -449,5 +505,73 @@ h2 {
     font-size: 10px;
     min-width: 32px;
   }
+}
+
+/* 添加下拉菜单样式 */
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 240px;
+  background-color: #282828;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  z-index: 1000;
+}
+
+.dropdown-header {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #333;
+}
+
+.dropdown-header img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
+
+.user-info h4 {
+  margin: 0;
+  color: white;
+  font-size: 0.9rem;
+}
+
+.user-info p {
+  margin: 4px 0 0;
+  color: #b3b3b3;
+  font-size: 0.8rem;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.1);
+  margin: 0;
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-item i {
+  font-size: 1rem;
+  color: #b3b3b3;
 }
 </style>
